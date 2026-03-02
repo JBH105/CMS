@@ -1,6 +1,5 @@
 import companyModel from "../model/company.model";
 import userModel from "../../auth/model/auth";
-import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { ROLE } from "@/shared/constants";
 import { generateToken } from "../../Middleware/middleware";
@@ -39,7 +38,7 @@ export const getAllCompanies = async () => {
 
 export const findCompanyWithEmail = async (email) => {
     const company = await companyModel.findOne({ email });
-    if (!company) return { error: "Company not found with this email" };
+    if (!company) throw new Error("Company not found with this email");
     return company;
 }
 
