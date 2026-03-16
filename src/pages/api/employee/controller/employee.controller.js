@@ -1,6 +1,6 @@
 import { HTTP_STATUS } from "@/utils/httpStatus";
 import { handleError, handleResponse } from "@/utils/responseHandler";
-import { createEmployee, fingerNotFound } from "../service/employee.service";
+import { createEmployee, fingerNotFound, getEmployeeService } from "../service/employee.service";
 import { employeeValidationSchema } from "../validation/employee.validation";
 import { generateToken } from "../../Middleware/middleware";
 
@@ -18,6 +18,15 @@ export const createEmployeeHandler = async (req, res) => {
   }
 };
 
+export const getAllEmployeeHandler = async (req, res) => {
+  try {
+    const result = await getEmployeeService(req.user);
+    return handleResponse(res, result, HTTP_STATUS.OK);
+  } catch (error) {
+    return handleError(res, new Error(error.message), HTTP_STATUS.INTERNAL_SERVER_ERROR);
+  }
+};
+
 export const bioMatricLogin = async (req, res) => {
   try {
     const { biometricId } = req.body;
@@ -29,7 +38,7 @@ export const bioMatricLogin = async (req, res) => {
     if (employee.error) {
       return handleError(res, new Error(employee.error), HTTP_STATUS.NOT_FOUND);
     }
-    
+
     const token = generateToken({ id: employee._id, email: employee.email, role: employee.role, companyId: employee.companyId })
     return res.status(200).json({ message: "Biometric Login Successful", token });
   } catch (error) {

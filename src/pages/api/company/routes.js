@@ -4,7 +4,7 @@ import { createCompanyHandler, companyLoginHandler, AllCompaniesHandler } from "
 const routes = {
     createCompany: { handler: createCompanyHandler, auth: true, roles: [ROLE.ADMIN] },
     allCompanies: { handler: AllCompaniesHandler, auth: true, roles: [ROLE.ADMIN] },
-    companyLogin: { handler: companyLoginHandler, auth: false, roles: [] }
+    // companyLogin: { handler: companyLoginHandler, auth: false, roles: [] }
 };
 
 export default routes;  

@@ -8,7 +8,24 @@ export const authenticateUser = async ({ email, password }) => {
     const matchPass = await bcrypt.compare(password, user.password);
     if (!matchPass) return { error: "Invalid email or password" };
 
-    const token = generateToken({ id: user.id, role: user.role })
+    let tokenPayload;
+    if (user.role === "company") {
+        const company = await findCompanyByUserId(user.id);
+        tokenPayload = {
+            id: company.id,
+            role: "company",
+            userId: user.id
+        };
+        const token = generateToken(tokenPayload);
+        const body = { token, user }
+        return body;
+    }
+    tokenPayload = {
+        id: user.id,
+        role: user.role
+    };
+
+    const token = generateToken(tokenPayload);
     const body = { token, user }
     return body;
 };
@@ -26,7 +43,7 @@ export const userExists = async (email) => {
 
 export const findUserWithEmail = async (email) => {
     const user = await User.findOne({ email });
-    if (!user) return { error: "User not found with this email" };
+    if (!user) throw new Error("User not found with this email");
     return user;
 }
 
@@ -35,3 +52,7 @@ export const companyFindForCreateAdmin = async (userId) => {
     if (!company) throw new Error("You don't belong to any company");
     return company;
 }
+
+export const findCompanyByUserId = async (accountId) => {
+    return await companyModel.findOne({ accountId });
+};

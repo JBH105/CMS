@@ -1,9 +1,6 @@
 import companyModel from "../model/company.model";
 import userModel from "../../auth/model/auth";
-import bcrypt from "bcrypt";
 import { ROLE } from "@/shared/constants";
-import { generateToken } from "../../Middleware/middleware";
-import { findUserWithEmail } from "../../auth/service/auth.service";
 
 export const createCompany = async (companyData, loginAdminId) => {
     const { email, password } = companyData;
@@ -42,19 +39,19 @@ export const findCompanyWithEmail = async (email) => {
     return company;
 }
 
-export const authenticateCompany = async ({ email, password }) => {
-    const company = await findCompanyWithEmail(email);
-    const user = await findUserWithEmail(email)
+// export const authenticateCompany = async ({ email, password }) => {
+//     const company = await findCompanyWithEmail(email);
+//     const user = await findUserWithEmail(email)
 
-    if (!company) throw new Error("Company not found");
+//     if (!company) throw new Error("Company not found");
 
-    let matchPass = await bcrypt.compare(password, user.password);
-    if (matchPass) {
-        let token = generateToken({ id: company._id, role: user.role });
-        const body = { token, company };
-        return body;
-    } else {
-        return { error: "Invalid email or password" };
-    }
+//     let matchPass = await bcrypt.compare(password, user.password);
+//     if (matchPass) {
+//         let token = generateToken({ id: company._id, role: user.role });
+//         const body = { token, company };
+//         return body;
+//     } else {
+//         return { error: "Invalid email or password" };
+//     }
 
-};
+// };
