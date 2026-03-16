@@ -7,5 +7,6 @@
 export const ROLE = {
   ADMIN: 'admin',
   COMPANY: 'company',
-  EMPLOYEE: 'employee'
+  EMPLOYEE: 'employee',
+  HR: 'hr'
 }

@@ -5,13 +5,13 @@ import { ROLE } from "@/shared/constants";
 import { generateToken } from "../../Middleware/middleware";
 import { findUserWithEmail } from "../../auth/service/auth.service";
 
-export const createCompany = async (companyData) => {
+export const createCompany = async (companyData, loginAdminId) => {
     const { email, password } = companyData;
     if (!password) {
         throw new Error("Password is required");
     }
 
-    const newUser = await userModel.create({
+    await userModel.create({
         username: companyData.companyName,
         email,
         password,
@@ -21,7 +21,7 @@ export const createCompany = async (companyData) => {
 
     const newCompany = await companyModel.create({
         ...companyData,
-        accountId: newUser._id
+        accountId: loginAdminId
     });
     return newCompany;
 };

@@ -1,4 +1,4 @@
-import { authenticateUser, findUserWithEmail, registerUser, userExists } from "../service/auth.service";
+import { authenticateUser, companyFindForCreateAdmin, findUserWithEmail, registerUser, userExists } from "../service/auth.service";
 import { loginValidation, } from "../validation/auth.validation";
 import { handleError, handleResponse } from "@/utils/responseHandler";
 import { HTTP_STATUS } from "@/utils/httpStatus";
@@ -30,6 +30,32 @@ export const signUpHandler = async (req, res) => {
       const newUser = await registerUser({ username, email, password, role });
 
       return handleResponse(res, newUser, HTTP_STATUS.CREATED);
+    } catch (error) {
+      return handleError(res, new Error(error.message), HTTP_STATUS.INTERNAL_SERVER_ERROR)
+    }
+  });
+};
+
+export const registerAdminHandler = async (req, res) => {
+  uploadImage.single("profileAvatar")(req, res, async (err) => {
+    if (err) {
+      return res.status(HTTP_STATUS.BAD_REQUEST).json({ error: err.message });
+    }
+
+    try {
+      const { username, email, password } = req.body;
+      if (!req.user || req.user.role !== "admin") {
+        return res.status(HTTP_STATUS.FORBIDDEN).json({ error: "Only admin can create another admin" });
+      }
+
+      const company = await companyFindForCreateAdmin(req.user.id);
+      await userExists(email);
+      const newAdmin = await registerUser({ username, email, password, role: "admin" });
+
+      company.admins.push(newAdmin._id);
+      await company.save();
+
+      return handleResponse(res, newAdmin, HTTP_STATUS.CREATED);
     } catch (error) {
       return handleError(res, new Error(error.message), HTTP_STATUS.INTERNAL_SERVER_ERROR)
     }

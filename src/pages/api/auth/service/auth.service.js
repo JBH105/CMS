@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt"
 import User from '../model/auth';
 import { generateToken } from "../../Middleware/middleware";
+import companyModel from "../../company/model/company.model";
 
 export const authenticateUser = async ({ email, password }) => {
     const user = await findUserWithEmail(email);
@@ -27,4 +28,10 @@ export const findUserWithEmail = async (email) => {
     const user = await User.findOne({ email });
     if (!user) return { error: "User not found with this email" };
     return user;
+}
+
+export const companyFindForCreateAdmin = async (userId) => {
+    const company = await companyModel.findOne({ accountId: userId });
+    if (!company) throw new Error("You don't belong to any company");
+    return company;
 }

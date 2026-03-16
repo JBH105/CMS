@@ -26,6 +26,8 @@ export const getLeaveHandler = async (req, res) => {
 
 export const approveLeaveHandler = async (req, res) => {
     try {
+        console.log(req.user);
+        
         const result = await updateLeaveStatusService(req.query.id, "approved", req.user);
         return handleResponse(res, result, HTTP_STATUS.OK);
     } catch (error) {
