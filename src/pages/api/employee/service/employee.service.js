@@ -11,6 +11,13 @@ export const createEmployee = async (employeeData) => {
   return newEmployee;
 };
 
+export const getEmployeeService = async (user) => {
+  if (user.role === "company") {
+    return await employeeModel.find({ companyId: user.id, }).populate("companyId");
+  }
+  throw new Error("Unauthorized user");
+};
+
 export const existsEmployee = async (email) => {
   const existingEmployee = await employeeModel.findOne({ email });
   if (existingEmployee) throw new Error("Employee with this email already exists");

@@ -32,14 +32,14 @@ export const AllCompaniesHandler = tryCatchWrapper(async (req, res) => {
     return handleResponse(res, companies, HTTP_STATUS.OK);
 });
 
-export const companyLoginHandler = tryCatchWrapper(async (req, res) => {
-    const body = req.body;
-    const { error } = companyLoginValidationSchema.validate(body);
-    if (error)
-        return handleError(res, new Error(error.details[0].message), HTTP_STATUS.BAD_REQUEST);
+// export const companyLoginHandler = tryCatchWrapper(async (req, res) => {
+//     const body = req.body;
+//     const { error } = companyLoginValidationSchema.validate(body);
+//     if (error)
+//         return handleError(res, new Error(error.details[0].message), HTTP_STATUS.BAD_REQUEST);
 
-    const authResponse = await authenticateCompany(body);
-    return authResponse.error
-        ? handleError(res, new Error(authResponse.error), HTTP_STATUS.UNAUTHORIZED)
-        : handleResponse(res, authResponse, HTTP_STATUS.OK);
-});
+//     const authResponse = await authenticateCompany(body);
+//     return authResponse.error
+//         ? handleError(res, new Error(authResponse.error), HTTP_STATUS.UNAUTHORIZED)
+//         : handleResponse(res, authResponse, HTTP_STATUS.OK);
+// });

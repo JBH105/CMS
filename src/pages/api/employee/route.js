@@ -1,9 +1,10 @@
 import { ROLE } from "@/shared/constants";
-import { bioMatricLogin, createEmployeeHandler } from "./controller/employee.controller";
+import { bioMatricLogin, createEmployeeHandler, getAllEmployeeHandler } from "./controller/employee.controller";
 import { approveLeaveHandler, createLeaveHandler, getLeaveHandler, leaveCountHandler, rejectLeaveHandler } from "./controller/employeeLeave.controller";
 
 const routes = {
     createEmployee: { handler: createEmployeeHandler, auth: true, roles: [ROLE.COMPANY] },
+    getAllEmployee: { handler: getAllEmployeeHandler, auth: true, roles: [ROLE.COMPANY] },
     bioMatricLogin: { handler: bioMatricLogin, auth: false, roles: [] },  // temporary
 
 

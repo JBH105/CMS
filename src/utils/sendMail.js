@@ -27,4 +27,4 @@ export const sendLeaveStatusMail = async ({ fromEmail, toEmail, employeeName, st
     };
 
     await transporter.sendMail(mailOptions);
-};
+}; 
