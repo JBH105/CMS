@@ -15,10 +15,11 @@ export const createCompanyHandler = async (req, res) => {
             // const logoPath = req.file ? `/uploads/${req.file.filename}` : "";
             const { error, value } = companyValidationSchema.validate(req.body);
             if (error) return handleError(res, new Error(error.message), HTTP_STATUS.BAD_REQUEST);
+            const loginAdminId = req.user.id;
 
             await existsCompany(value.email);
             await userExists(value.email);
-            const newCompany = await createCompany(value);
+            const newCompany = await createCompany(value, loginAdminId);
             return handleResponse(res, newCompany, HTTP_STATUS.CREATED);
         } catch (error) {
             return handleError(res, new Error(error.message), HTTP_STATUS.INTERNAL_SERVER_ERROR);

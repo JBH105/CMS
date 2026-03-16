@@ -1,4 +1,6 @@
+import { sendLeaveStatusMail } from "@/utils/sendMail";
 import employeeLeave from "../model/employeeLeave.model";
+import userModel from "../../auth/model/auth";
 
 export const createLeaveService = async (data, user) => {
     if (user.role !== "employee") {
@@ -16,6 +18,9 @@ export const createLeaveService = async (data, user) => {
 };
 
 export const getLeaveService = async (user) => {
+    if (user.role === "admin") {
+        return await employeeLeave.find();
+    }
     if (user.role === "company") {
         return await employeeLeave.find({
             companyId: user.id,
@@ -33,7 +38,16 @@ export const updateLeaveStatusService = async (id, status, user) => {
     if (user.role !== "admin") {
         throw new Error("Only admin can approve/reject");
     }
-    const updated = await employeeLeave.findByIdAndUpdate(id, { status }, { new: true });
+    const admin = await userModel.findById(user.id);
+    const updated = await employeeLeave.findByIdAndUpdate(id, { status }, { new: true }).populate("employeeId");
+    if (!updated) throw new Error("Leave request not found");
+    // await sendLeaveStatusMail({
+    //     fromEmail: admin.email,
+    //     toEmail: updated.employeeId.email,
+    //     employeeName: updated.employeeId.name,
+    //     status,
+    //     adminName: admin.username
+    // })
     return updated;
 };
 

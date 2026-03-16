@@ -5,6 +5,7 @@ import connectDB from "@/config/db";
 import userActions from "./auth/routes";
 import companyActions from "./company/routes"
 import employeeActions from "./employee/route"
+import clientActions from "./client/routes"
 
 // export const config = {
 //   api: {
@@ -16,7 +17,8 @@ const routeMap = {
   // Route action
   auth: userActions,
   company: companyActions,
-  employee: employeeActions
+  employee: employeeActions,
+  client: clientActions
 };
 
 // endpoint example
