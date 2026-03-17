@@ -28,7 +28,8 @@ export const createCompanyHandler = async (req, res) => {
 };
 
 export const AllCompaniesHandler = tryCatchWrapper(async (req, res) => {
-    const companies = await getAllCompanies();
+    const adminId = req.user.id;
+    const companies = await getAllCompanies(adminId);
     return handleResponse(res, companies, HTTP_STATUS.OK);
 });
 

@@ -35,8 +35,8 @@ export const getLeaveService = async (user) => {
 };
 
 export const updateLeaveStatusService = async (id, status, user) => {
-    if (user.role !== "admin") {
-        throw new Error("Only admin can approve/reject");
+    if (user.role !== "company") {
+        throw new Error("Only company can approve/reject");
     }
     const admin = await userModel.findById(user.id);
     const updated = await employeeLeave.findByIdAndUpdate(id, { status }, { new: true }).populate("employeeId");

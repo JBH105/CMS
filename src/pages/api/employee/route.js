@@ -11,8 +11,8 @@ const routes = {
     // Employee Leave Routes
     createLeave: { handler: createLeaveHandler, auth: true, roles: [ROLE.EMPLOYEE] },
     getLeave: { handler: getLeaveHandler, auth: true, roles: [ROLE.ADMIN, ROLE.COMPANY, ROLE.EMPLOYEE] },
-    approveLeave: { handler: approveLeaveHandler, auth: true, roles: [ROLE.ADMIN] },
-    rejectLeave: { handler: rejectLeaveHandler, auth: true, roles: [ROLE.ADMIN] },
+    approveLeave: { handler: approveLeaveHandler, auth: true, roles: [ROLE.COMPANY] },
+    rejectLeave: { handler: rejectLeaveHandler, auth: true, roles: [ROLE.COMPANY] },
     countLeave: { handler: leaveCountHandler, auth: true, roles: [ROLE.ADMIN] },
 };
 

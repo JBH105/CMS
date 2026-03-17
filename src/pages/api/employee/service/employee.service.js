@@ -13,7 +13,9 @@ export const createEmployee = async (employeeData) => {
 
 export const getEmployeeService = async (user) => {
   if (user.role === "company") {
-    return await employeeModel.find({ companyId: user.id, }).populate("companyId");
+    let employee = await employeeModel.find({ companyId: user.id, }).populate("companyId");
+    if (employee.length === 0) throw new Error("No employee found in this company");
+    return employee;
   }
   throw new Error("Unauthorized user");
 };
