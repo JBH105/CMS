@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import { useSelector, useDispatch } from 'react-redux';
-import { logout } from '@/store/authSlice';
+import { logout } from '@/features/auth/services/authSlice';
 import { useRouter } from 'next/router';
 
 export default function UserDashboard() {

@@ -1,11 +1,11 @@
 import React from 'react';
-import AdminLayout from '@/components/admin/AdminLayout';
-import Companies from '@/components/admin/companies/Companies';
+import MainLayout from '@/layout/MainLayout/layout';
+import Companies from '@/features/companies/components/Companies';
 
 export default function CompaniesPage() {
   return (
-    <AdminLayout>
+    <MainLayout>
       <Companies />
-    </AdminLayout>
+    </MainLayout>
   );
 }

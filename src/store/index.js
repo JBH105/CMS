@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { authApi } from './api/auth/authApi';
-import { companyApi } from './api/company/companyApi';
-import { employeeApi } from './api/employee/employeeApi';
+import { authApi } from '../features/auth/services/authApi';
+import { companyApi } from '../features/companies/services/companyApi';
+import { employeeApi } from '../features/employee/services/employeeApi';
 import { hrApi } from './api/hr/hrApi';
-import { leaveemployeeApi } from './api/leaveemployee/leaveemployeeApi';
-import authSlice from './authSlice';
+import { leaveemployeeApi } from '../features/leaveEmployee/services/leaveemployeeApi';
+import authSlice from '../features/auth/services/authSlice';
 
 export const store = configureStore({
   reducer: {
