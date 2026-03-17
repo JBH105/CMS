@@ -10,7 +10,7 @@ export const authenticateUser = async ({ email, password }) => {
 
     let tokenPayload;
     if (user.role === "company") {
-        const company = await findCompanyByUserId(user.id);
+        const company = await findCompanyByUserId(user._id);
         tokenPayload = {
             id: company.id,
             role: "company",
@@ -53,6 +53,6 @@ export const companyFindForCreateAdmin = async (userId) => {
     return company;
 }
 
-export const findCompanyByUserId = async (accountId) => {
-    return await companyModel.findOne({ accountId });
+export const findCompanyByUserId = async (userId) => {
+    return await companyModel.findOne({ userId });
 };

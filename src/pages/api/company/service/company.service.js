@@ -8,7 +8,7 @@ export const createCompany = async (companyData, loginAdminId) => {
         throw new Error("Password is required");
     }
 
-    await userModel.create({
+    const newUser = await userModel.create({
         username: companyData.companyName,
         email,
         password,
@@ -18,7 +18,8 @@ export const createCompany = async (companyData, loginAdminId) => {
 
     const newCompany = await companyModel.create({
         ...companyData,
-        accountId: loginAdminId
+        accountId: loginAdminId,
+        userId: newUser._id
     });
     return newCompany;
 };
@@ -28,8 +29,8 @@ export const existsCompany = async (email) => {
     if (existingCompany) throw new Error("Company with this email already exists");
 }
 
-export const getAllCompanies = async () => {
-    const allCompanies = await companyModel.find();
+export const getAllCompanies = async (adminId) => {
+    const allCompanies = await companyModel.find({ accountId: adminId });
     return allCompanies;
 };
 

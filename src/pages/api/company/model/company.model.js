@@ -6,6 +6,10 @@ const companySchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User"
     },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
+    },
     admins: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -18,7 +22,7 @@ const companySchema = new mongoose.Schema(
     },
     industryName: {
       type: String,
-      required: true  
+      required: true
     },
     companySize: {
       type: Number,
