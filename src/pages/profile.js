@@ -1,7 +1,8 @@
 import React from 'react';
 import Head from 'next/head';
 import { useSelector } from 'react-redux';
-import AdminLayout from '@/components/admin/AdminLayout';
+import MainLayout from '@/layout/MainLayout/layout';
+
 
 export default function Profile() {
   const user = useSelector((state) => state.auth.user);
@@ -17,7 +18,7 @@ export default function Profile() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
-      <AdminLayout>
+      <MainLayout>
         <div className="p-6">
           <h1 className="text-2xl font-bold mb-4">User Profile</h1>
           <div className="bg-white p-6 rounded-lg shadow">
@@ -35,7 +36,7 @@ export default function Profile() {
             </div>
           </div>
         </div>
-      </AdminLayout>
+      </MainLayout>
     </>
   );
 }
