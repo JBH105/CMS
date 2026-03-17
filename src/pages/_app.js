@@ -3,7 +3,7 @@ import { Provider, useDispatch } from 'react-redux';
 import { store } from '@/store';
 import { Toaster } from 'sonner';
 import { useEffect } from 'react';
-import { loadAuthFromStorage } from '@/store/authSlice';
+import { loadAuthFromStorage } from '@/features/auth/services/authSlice';
 
 function AuthInitializer({ children }) {
   const dispatch = useDispatch();
@@ -26,3 +26,4 @@ export default function App({ Component, pageProps }) {
     </Provider>
   );
 }
+  
