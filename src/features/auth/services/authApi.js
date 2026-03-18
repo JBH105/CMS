@@ -13,8 +13,6 @@ export const authApi = createApi({
         body: credentials,
       }),
       transformResponse: (response) => {
-        console.log('Raw API response:', response);
-        // If response has data property, return it; otherwise return response
         return response.data || response;
       },
     }),

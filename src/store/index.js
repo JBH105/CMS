@@ -5,6 +5,7 @@ import { employeeApi } from '../features/employee/services/employeeApi';
 import { hrApi } from './api/hr/hrApi';
 import { leaveemployeeApi } from '../features/leaveEmployee/services/leaveemployeeApi';
 import authSlice from '../features/auth/services/authSlice';
+import { clientApi } from '@/features/client/services/clientApi';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     [employeeApi.reducerPath]: employeeApi.reducer,
     [hrApi.reducerPath]: hrApi.reducer,
     [leaveemployeeApi.reducerPath]: leaveemployeeApi.reducer,
+    [clientApi.reducerPath]: clientApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -21,6 +23,8 @@ export const store = configureStore({
       companyApi.middleware,
       employeeApi.middleware,
       hrApi.middleware,
-      leaveemployeeApi.middleware
+      leaveemployeeApi.middleware,
+      clientApi.middleware
+
     ),
 });

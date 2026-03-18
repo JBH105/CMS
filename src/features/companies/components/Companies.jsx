@@ -11,6 +11,9 @@ import DataTable from "@/shared/Table/DataTable";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import OnboardCompanyModal from "./OnboardCompanyModal";
+import { toast } from "sonner";
+import Loader from "@/layout/loader/loader";
+import { Eye, Pencil, Trash2 } from "lucide-react";
 
 const Companies = () => {
   const { user, isAuthenticated } = useSelector((state) => state.auth);
@@ -35,7 +38,6 @@ const Companies = () => {
         return;
       }
       setIsLoading(false);
-      console.log("Companies Component: User authenticated:", user);
     }, 100);
 
     return () => clearTimeout(timer);
@@ -45,19 +47,22 @@ const Companies = () => {
     try {
       await createCompany(payload).unwrap();
 
+      toast.success("Company created successfully");
+
       setOpenModal(false);
       refetch();
     } catch (error) {
-      console.error("Create company error", error);
+      const errorMessage =
+        error?.data?.error || error?.data?.message || "Something went wrong";
+
+      toast.error(errorMessage);
+
+      console.error("Create company error:", error);
     }
   };
 
   if (isLoading || isLoadingCompanies) {
-    return (
-      <div className="min-h-screen bg-blue-50 flex items-center justify-center">
-        <div className="text-blue-600 text-xl">Loading companies...</div>
-      </div>
-    );
+    return <Loader />;
   }
 
   if (error) {
@@ -160,29 +165,34 @@ const Companies = () => {
   // Define actions for each row
   const actions = (row) => (
     <div className="flex space-x-2">
+      {/* View */}
       <Button
         variant="outline"
         size="sm"
         onClick={() => handleViewCompany(row)}
-        className="bg-white border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300"
+        className="text-blue-600"
       >
-        View
+        <Eye className="w-4 h-4" />
       </Button>
+
+      {/* Edit */}
       <Button
         variant="outline"
         size="sm"
-        onClick={() => handleEditCompany(row)}
-        className="bg-white border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300"
+        onClick={() => handleEditCompany(row)}  
+        className="text-gray-700"
       >
-        Edit
+        <Pencil className="w-4 h-4" />
       </Button>
+
+      {/* Delete */}
       <Button
         variant="destructive"
         size="sm"
         onClick={() => handleDeleteCompany(row)}
-        className="bg-red-50 border-red-200 text-red-700 hover:bg-red-100 hover:border-red-300"
+        className="text-red-700 "
       >
-        Delete
+        <Trash2 className="w-4 h-4" />
       </Button>
     </div>
   );
@@ -207,7 +217,12 @@ const Companies = () => {
             Companies Management
           </h1>
 
-          <Button onClick={() => setOpenModal(true)}>Onboard Company</Button>
+          <Button
+            onClick={() => setOpenModal(true)}
+            className="bg-gradient-to-br from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 text-white font-medium text-md shadow-md hover:shadow-lg rounded-lg transition-all duration-300 border-0"
+          >
+            Onboard Company
+          </Button>
         </div>
 
         {/* Companies Table */}
