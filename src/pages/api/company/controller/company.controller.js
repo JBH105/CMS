@@ -17,7 +17,7 @@ export const createCompanyHandler = async (req, res) => {
             if (error) return handleError(res, new Error(error.message), HTTP_STATUS.BAD_REQUEST);
             const loginAdminId = req.user.id;
 
-            await existsCompany(value.email);
+            await existsCompany(value.email, value.companyName);
             await userExists(value.email);
             const newCompany = await createCompany(value, loginAdminId);
             return handleResponse(res, newCompany, HTTP_STATUS.CREATED);

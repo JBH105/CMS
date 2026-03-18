@@ -1,9 +1,10 @@
-import { authenticateUser, companyFindForCreateAdmin, findUserWithEmail, registerUser, userExists } from "../service/auth.service";
+import { authenticateUser, companyFindForCreateAdmin, createCompanyAdminService, findUserWithEmail, registerUser, userExists } from "../service/auth.service";
 import { loginValidation, } from "../validation/auth.validation";
 import { handleError, handleResponse } from "@/utils/responseHandler";
 import { HTTP_STATUS } from "@/utils/httpStatus";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import uploadImage from "../../Middleware/uploadImage";
+import companyOwnerModel from "../model/companyOwner.model";
 
 export const loginHandler = tryCatchWrapper(async (req, res) => {
   const body = req.body;
@@ -36,28 +37,22 @@ export const signUpHandler = async (req, res) => {
   });
 };
 
-export const registerAdminHandler = async (req, res) => {
-  uploadImage.single("profileAvatar")(req, res, async (err) => {
-    if (err) {
-      return res.status(HTTP_STATUS.BAD_REQUEST).json({ error: err.message });
+export const addCompanyOwnerHandler = async (req, res) => {
+  try {
+    const { username, email, password, companyId } = req.body
+    const loggedInAdminId = req.user.id
+
+    const isAllowed = await companyOwnerModel.findOne({
+      accountId: loggedInAdminId,
+      companyId: companyId
+    })
+    if (!isAllowed) {
+      return res.status(HTTP_STATUS.FORBIDDEN).json({ error: "Not authorized for this company" })
     }
 
-    try {
-      const { username, email, password } = req.body;
-      if (!req.user || req.user.role !== "admin") {
-        return res.status(HTTP_STATUS.FORBIDDEN).json({ error: "Only admin can create another admin" });
-      }
-
-      const company = await companyFindForCreateAdmin(req.user.id);
-      await userExists(email);
-      const newAdmin = await registerUser({ username, email, password, role: "admin" });
-
-      company.admins.push(newAdmin._id);
-      await company.save();
-
-      return handleResponse(res, newAdmin, HTTP_STATUS.CREATED);
-    } catch (error) {
-      return handleError(res, new Error(error.message), HTTP_STATUS.INTERNAL_SERVER_ERROR)
-    }
-  });
+    const newAdmin = await createCompanyAdminService({ username, email, password, companyId })
+    return handleResponse(res, newAdmin, HTTP_STATUS.CREATED)
+  } catch (error) {
+    return handleError(res, new Error(error.message), HTTP_STATUS.INTERNAL_SERVER_ERROR)
+  }
 };

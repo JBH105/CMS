@@ -6,12 +6,19 @@ const companySchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User"
     },
+<<<<<<< Updated upstream
     admins: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
       }
     ],
+=======
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
+    },
+>>>>>>> Stashed changes
     companyName: {
       type: String,
       required: true

@@ -72,7 +72,12 @@ const employeeSchema = new mongoose.Schema({
         type: String,
         default: ROLE.EMPLOYEE
     },
-    biometricId: { // Temporary field for biomatric login
+    pin: {
+        type: String,
+        unique: true,
+        required: true
+    },
+    biometricId: {
         type: String,
         unique: true,
         required: true

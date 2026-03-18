@@ -5,6 +5,7 @@
 // }
 
 export const ROLE = {
+  COMPANY_OWNER: 'company_owner',
   ADMIN: 'admin',
   COMPANY: 'company',
   EMPLOYEE: 'employee',
