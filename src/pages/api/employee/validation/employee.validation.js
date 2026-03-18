@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 export const employeeValidationSchema = Joi.object({
-    companyId: Joi.string(), 
+    companyId: Joi.string(),
     name: Joi.string().min(3).max(50).required(),
     email: Joi.string().email().required(),
     phone: Joi.number().integer().required(),
@@ -22,5 +22,9 @@ export const employeeValidationSchema = Joi.object({
     address: Joi.string().optional().allow(""),
     guardianRelation: Joi.string().required().allow(""),
     guardianNumber: Joi.number().integer().required().allow(""),
-    biometricId: Joi.string().required()
+    biometricId: Joi.string().required(),
+    pin: Joi.string().pattern(/^\d{6}$/).required().messages({
+        "string.pattern.base": "PIN must be exactly 6 digits",
+        "string.empty": "PIN is required"
+    })
 });

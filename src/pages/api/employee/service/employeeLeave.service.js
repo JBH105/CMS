@@ -19,17 +19,17 @@ export const createLeaveService = async (data, user) => {
 
 export const getLeaveService = async (user) => {
     if (user.role === "admin") {
-        return await employeeLeave.find().populate("employeeId");
+        return await employeeLeave.find().sort({ createdAt: -1 }).populate("employeeId");
     }
     if (user.role === "company") {
         return await employeeLeave.find({
             companyId: user.id,
-        }).populate("employeeId");
+        }).sort({ createdAt: -1 }).populate("employeeId");
     }
     if (user.role === "employee") {
         return await employeeLeave.find({
             employeeId: user.id,
-        }).populate("employeeId");
+        }).sort({ createdAt: -1 }).populate("employeeId");
     }
     throw new Error("Unauthorized user");
 };
