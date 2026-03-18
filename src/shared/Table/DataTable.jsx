@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState, useMemo } from 'react';
 import {
@@ -37,7 +37,8 @@ const DataTable = ({
 
   // Sorting logic
   const sortedData = useMemo(() => {
-    if (!sortConfig.key || !sortable) return data;
+    if (!sortConfig.key || !sortable || !Array.isArray(data))
+      return Array.isArray(data) ? data : [];
 
     return [...data].sort((a, b) => {
       const aValue = a[sortConfig.key];
@@ -55,12 +56,14 @@ const DataTable = ({
 
   // Pagination logic
   const paginatedData = useMemo(() => {
-    if (!pagination) return sortedData;
+    if (!pagination || !Array.isArray(sortedData)) return sortedData;
     const startIndex = (currentPage - 1) * pageSize;
     return sortedData.slice(startIndex, startIndex + pageSize);
   }, [sortedData, currentPage, pageSize, pagination]);
 
-  const totalPages = Math.ceil(sortedData.length / pageSize);
+  const totalPages = Math.ceil(
+    (Array.isArray(sortedData) ? sortedData.length : 0) / pageSize,
+  );
 
   // Handle sorting
   const handleSort = (key) => {

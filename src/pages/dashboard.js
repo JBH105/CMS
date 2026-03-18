@@ -18,7 +18,6 @@ export default function UserDashboard() {
         return;
       }
       setIsLoading(false);
-      console.log('Dashboard: User authenticated:', user);
     }, 100);
 
     return () => clearTimeout(timer);

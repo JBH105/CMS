@@ -5,6 +5,7 @@ import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import FloatingField from "@/shared/field/FloatingField";
 
 /* ---------------- VALIDATION ---------------- */
 
@@ -20,59 +21,6 @@ const validationSchema = Yup.object({
     .min(6, "Minimum 6 characters")
     .required("Password required"),
 });
-
-/* ---------------- FLOATING INPUT ---------------- */
-
-const FloatingField = ({ id, label, type = "text", formik }) => {
-  const error = formik.touched[id] && formik.errors[id];
-
-  return (
-    <div className="relative w-full">
-      <Input
-        id={id}
-        name={id}
-        type={type}
-        placeholder=" "
-        value={formik.values[id]}
-        onChange={formik.handleChange}
-        onBlur={formik.handleBlur}
-        className={`peer h-11 w-full rounded-lg border bg-white px-3 pt-4 pb-1 text-sm outline-none transition
-        ${
-          error
-            ? "border-red-500 focus:border-red-500"
-            : "border-gray-300 focus:border-blue-500"
-        }`}
-      />
-
-      <label
-        htmlFor={id}
-        className="
-        pointer-events-none
-        absolute left-3 top-3
-        text-sm text-gray-500
-        transition-all duration-200
-        peer-focus:-top-2
-        peer-focus:text-xs
-        peer-focus:text-blue-600
-        peer-focus:bg-white
-        peer-focus:px-1
-        peer-placeholder-shown:top-3
-        peer-placeholder-shown:text-sm
-        peer-not-placeholder-shown:-top-2
-        peer-not-placeholder-shown:text-xs
-        peer-not-placeholder-shown:bg-white
-        peer-not-placeholder-shown:px-1
-        "
-      >
-        {label}
-      </label>
-
-      {error && (
-        <p className="text-red-500 text-xs mt-1">{formik.errors[id]}</p>
-      )}
-    </div>
-  );
-};
 
 /* ---------------- MODAL ---------------- */
 

@@ -52,7 +52,6 @@ export default function LoginPage() {
     onSubmit: async (values) => {
       try {
         const result = await login(values).unwrap();
-        console.log("Login result:", result);
 
         // Validate API response structure
         if (!result || !result.token || !result.user) {
@@ -84,7 +83,6 @@ export default function LoginPage() {
           } else if (userRole === "company") {
             redirectPath = "/companines/employee";
           }
-          console.log("Redirecting to:", redirectPath, "for role:", userRole);
           router.push(redirectPath);
         }, 100);
       } catch (err) {

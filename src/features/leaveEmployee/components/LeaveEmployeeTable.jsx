@@ -3,9 +3,9 @@
 import React from "react";
 import DataTable from "@/shared/Table/DataTable";
 import { Button } from "@/shared/ui/button";
+import { Check, X } from "lucide-react";
 
 const LeaveEmployeeTable = ({ data = [], role, onApprove, onReject }) => {
-  console.log("🚀 ~ LeaveEmployeeTable ~ role:", role)
   // Ensure data is always an array
   const safeData = Array.isArray(data) ? data : [];
 
@@ -182,17 +182,19 @@ const LeaveEmployeeTable = ({ data = [], role, onApprove, onReject }) => {
               <div className="flex gap-2">
                 <Button
                   size="sm"
-                  className="bg-green-600 hover:bg-green-700"
+                  className="text-green-600"
+                  variant="outline"
                   onClick={() => onApprove(row._id)}
                 >
-                  Approve
+                  <Check className="w-4 h-4"/>
                 </Button>
                 <Button
                   size="sm"
-                  variant="destructive"
+                 className="text-red-600"
+                 variant="outline"
                   onClick={() => onReject(row._id)}
                 >
-                  Reject
+                  <X className="w-4 h-4"/>
                 </Button>
               </div>
             )

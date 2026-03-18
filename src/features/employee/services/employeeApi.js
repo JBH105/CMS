@@ -4,19 +4,23 @@ import { baseQuery } from '../../../store/api/index';
 export const employeeApi = createApi({
   reducerPath: 'employeeApi',
   baseQuery,
+  tagTypes: ['Employee'],
   endpoints: (builder) => ({
     getEmployees: builder.query({
-      query: () => '/employee',
+      query: () => '/employee?action=getAllEmployee',
+      providesTags: ['Employee'],
     }),
     getEmployee: builder.query({
       query: (id) => `/employee/${id}`,
+      providesTags: ['Employee'],
     }),
     createEmployee: builder.mutation({
       query: (employeeData) => ({
-        url: '/employee',
+        url: '/employee?action=createEmployee',
         method: 'POST',
         body: employeeData,
       }),
+      invalidatesTags: ['Employee'],
     }),
     updateEmployee: builder.mutation({
       query: ({ id, ...employeeData }) => ({
@@ -24,12 +28,14 @@ export const employeeApi = createApi({
         method: 'PUT',
         body: employeeData,
       }),
+      invalidatesTags: ['Employee'],
     }),
     deleteEmployee: builder.mutation({
       query: (id) => ({
         url: `/employee/${id}`,
         method: 'DELETE',
       }),
+      invalidatesTags: ['Employee'],
     }),
   }),
 });
