@@ -5,11 +5,21 @@ import bcrypt from "bcrypt";
 
 export const createEmployee = async (employeeData) => {
   const { email, companyId, pin } = employeeData;
+  const existingPin = await employeeModel.findOne({ pin });
+  if (existingPin) throw new Error("PIN already exists");
   await existsEmployee(email);
   await fetchCompany(companyId);
   await countEmployee(companyId);
-  const hashPin = await bcrypt.hash(pin, 10);
-  const newEmployee = await employeeModel.create({ ...employeeData, pin: hashPin });
+  // const employees = await employeeModel.find({ pin: { $ne: null } }, { pin: 1 });
+
+  // for (let emp of employees) {
+  //   const isMatch = await bcrypt.compare(pin, emp.pin);
+  //   if (isMatch) {
+  //     throw new Error("PIN already exists");
+  //   }
+  // }
+  // const hashPin = await bcrypt.hash(pin, 10);
+  const newEmployee = await employeeModel.create({ ...employeeData });
   return newEmployee;
 };
 
@@ -46,10 +56,4 @@ export const countEmployee = async (companyId) => {
   if (employeeCount >= company.companySize) {
     return res.status(HTTP_STATUS.BAD_REQUEST).json({ error: "Company has reached its maximum employee limit" });
   }
-};
-
-export const fingerNotFound = async (biometricId) => {
-  const employee = await employeeModel.findOne({ biometricId });
-  if (!employee) throw new Error("Invalid Fingerprint");
-  return employee;
 };

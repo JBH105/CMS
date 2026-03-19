@@ -8,7 +8,11 @@ import employeeModel from "../../employee/model/employee.model";
 
 export const authenticateUser = async ({ email, password, pin }) => {
     const user = await findUserWithEmail(email);
-    const matchPass = await bcrypt.compare(password, user.password);
+    if (user) {
+        if (!password) {
+            return { error: "Password is required instead of a pin for admin and company login" };
+        }
+        const matchPass = await bcrypt.compare(password, user.password);
         if (!matchPass) return { error: "Invalid email or password" };
 
         let tokenPayload;
@@ -27,10 +31,30 @@ export const authenticateUser = async ({ email, password, pin }) => {
             id: user.id,
             role: user.role
         };
-
         const token = generateToken(tokenPayload);
         const body = { token, user }
         return body;
+    }
+
+    const employee = await findEmployeeByEmail(email);
+    if (employee) {
+        if (!pin) {
+            return { error: "PIN is required instead of a password for employee login" };
+        }
+
+        // const matchPin = await bcrypt.compare(pin, employee.pin);
+        if (employee.pin !== pin) return { error: "Invalid email or pin" };
+        const tokenPayload = {
+            id: employee._id,
+            role: employee.role,
+            email: employee.email,
+            companyId: employee.companyId
+        };
+        const token = generateToken(tokenPayload);
+        const body = { token, user: employee };
+        return body;
+    }
+    return { error: "User not found" };
 };
 
 export const registerUser = async ({ username, email, password, role, profileAvatar }) => {
@@ -45,7 +69,6 @@ export const userExists = async (email) => {
 
 export const findUserWithEmail = async (email) => {
     const user = await User.findOne({ email });
-    if (!user) throw new Error("User not found with this email");
     return user;
 }
 
@@ -56,7 +79,7 @@ export const findCompanyByUserId = async (userId) => {
 export const createCompanyAdminService = async ({ username, email, password, companyId }) => {
     let user = await User.findOne({ email })
     if (!user) {
-        user = await User.create({ username, email, password, role: ROLE.COMPANY_ADMIN })
+        user = await User.create({ username, email, password, role: ROLE.COMPANY_OWNER })
     }
     const exists = await companyOwnerModel.findOne({
         accountId: user._id,

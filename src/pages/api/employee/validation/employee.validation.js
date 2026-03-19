@@ -22,7 +22,6 @@ export const employeeValidationSchema = Joi.object({
     address: Joi.string().optional().allow(""),
     guardianRelation: Joi.string().required().allow(""),
     guardianNumber: Joi.number().integer().required().allow(""),
-    biometricId: Joi.string().required(),
     pin: Joi.string().pattern(/^\d{6}$/).required().messages({
         "string.pattern.base": "PIN must be exactly 6 digits",
         "string.empty": "PIN is required"

@@ -77,11 +77,6 @@ const employeeSchema = new mongoose.Schema({
         unique: true,
         required: true
     },
-    biometricId: {
-        type: String,
-        unique: true,
-        required: true
-    }
 },
     {
         timestamps: { createdAt: "created_at", updatedAt: false },
