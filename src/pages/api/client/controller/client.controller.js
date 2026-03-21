@@ -13,16 +13,14 @@ export const createClientHandler = tryCatchWrapper(async (req, res) => {
 });
 
 export const getAllClientHandler = tryCatchWrapper(async (req, res) => {
-    const clients = await getAllClient();
-    if (!clients) {
-        return handleError(res, new Error("Clients not found"), HTTP_STATUS.NOT_FOUND);
-    }
+    const clients = await getAllClient(req.user);
     return handleResponse(res, clients, HTTP_STATUS.OK);
 });
 
 export const singleClientInfoHandler = tryCatchWrapper(async (req, res) => {
     const clientId = req.query.id;
-    const singleClient = await singleClientInfo(clientId);
+    if (!clientId) throw new Error("Client id not found");
+    const singleClient = await singleClientInfo(clientId, req.user);
     return handleResponse(res, singleClient, HTTP_STATUS.OK);
 });
 

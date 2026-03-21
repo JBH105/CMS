@@ -48,6 +48,7 @@ export const existsCompany = async (email, companyName) => {
 
 export const getAllCompanies = async (adminId) => {
     const allCompanies = await companyModel.find({ accountId: adminId }).sort({ created_at: -1 });
+    if (allCompanies.length === 0) throw new Error("No anyone company found of this admin");
     return allCompanies;
 };
 
@@ -56,20 +57,3 @@ export const findCompanyWithEmail = async (email) => {
     if (!company) throw new Error("Company not found with this email");
     return company;
 }
-
-// export const authenticateCompany = async ({ email, password }) => {
-//     const company = await findCompanyWithEmail(email);
-//     const user = await findUserWithEmail(email)
-
-//     if (!company) throw new Error("Company not found");
-
-//     let matchPass = await bcrypt.compare(password, user.password);
-//     if (matchPass) {
-//         let token = generateToken({ id: company._id, role: user.role });
-//         const body = { token, company };
-//         return body;
-//     } else {
-//         return { error: "Invalid email or password" };
-//     }
-
-// };
