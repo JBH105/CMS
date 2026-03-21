@@ -4,8 +4,9 @@ import React from "react";
 import DataTable from "@/shared/Table/DataTable";
 import { Button } from "@/shared/ui/button";
 import { Check, X } from "lucide-react";
+import { capitalizeWords } from "@/utils/formater";
 
-const LeaveEmployeeTable = ({ data = [], role, onApprove, onReject }) => {
+const LeaveEmployeeTable = ({ data = [], role, onApprove, onReject, loading }) => {
   // Ensure data is always an array
   const safeData = Array.isArray(data) ? data : [];
 
@@ -29,26 +30,42 @@ const LeaveEmployeeTable = ({ data = [], role, onApprove, onReject }) => {
 
     if (role === "admin") {
       baseColumns.push(
-        { 
-          key: "employeeName", 
+        {
+          key: "employeeName",
           title: "Employee Name",
-          render: (_, row) => getEmployeeName(row)
+          render: (_, row) => (
+            <span className="font-medium text-gray-600">
+              {capitalizeWords(getEmployeeName(row))}
+            </span>
+          ),
         },
-        { 
-          key: "company", 
+        {
+          key: "company",
           title: "Company",
-          render: (_, row) => getCompanyName(row)
+          render: (_, row) => (
+            <span className="font-medium text-gray-600">
+              {getCompanyName(row)}
+            </span>
+          ),
         },
         { key: "leaveType", title: "Leave Type" },
         {
           key: "from",
           title: "From",
-          render: (_, row) => formatDate(row.startDate)
+          render: (_, row) => (
+            <span className="font-medium text-gray-600">
+              {formatDate(row.startDate)}
+            </span>
+          ),
         },
         {
           key: "to",
           title: "To",
-          render: (_, row) => formatDate(row.endDate)
+          render: (_, row) => (
+            <span className="font-medium text-gray-600">
+              {formatDate(row.endDate)}
+            </span>
+          ),
         },
         {
           key: "status",
@@ -64,25 +81,45 @@ const LeaveEmployeeTable = ({ data = [], role, onApprove, onReject }) => {
               {value}
             </span>
           ),
-        }
+        },
       );
     } else if (role === "company") {
       baseColumns.push(
-        { 
-          key: "employeeName", 
+        {
+          key: "employeeName",
           title: "Employee Name",
-          render: (_, row) => getEmployeeName(row)
+          render: (_, row) => (
+            <span className="font-medium text-gray-600">
+              {capitalizeWords(getEmployeeName(row))}
+            </span>
+          ),
         },
-        { key: "leaveType", title: "Leave Type" },
+        {
+          key: "leaveType",
+          title: "Leave Type",
+          render: (value) => (
+            <span className="font-medium text-gray-600">
+              {capitalizeWords(value)}
+            </span>
+          ),
+        },
         {
           key: "from",
           title: "From",
-          render: (_, row) => formatDate(row.startDate)
+          render: (_, row) => (
+            <span className="font-medium text-gray-600">
+              {formatDate(row.startDate)}
+            </span>
+          ),
         },
         {
           key: "to",
           title: "To",
-          render: (_, row) => formatDate(row.endDate)
+          render: (_, row) => (
+            <span className="font-medium text-gray-600">
+              {formatDate(row.endDate)}
+            </span>
+          ),
         },
         {
           key: "status",
@@ -98,20 +135,32 @@ const LeaveEmployeeTable = ({ data = [], role, onApprove, onReject }) => {
               {value}
             </span>
           ),
-        }
+        },
       );
     } else if (role === "employee") {
       baseColumns.push(
-        { key: "leaveType", title: "Leave Type" },
+        { key: "leaveType", title: "Leave Type", render: (value) => (
+            <span className="font-medium text-gray-600">
+              {capitalizeWords(value)}
+            </span>
+          ) },
         {
           key: "from",
           title: "From",
-          render: (_, row) => formatDate(row.startDate)
+          render: (_, row) => (
+            <span className="font-medium text-gray-600">
+              {formatDate(row.startDate)}
+            </span>
+          ),
         },
         {
           key: "to",
           title: "To",
-          render: (_, row) => formatDate(row.endDate)
+          render: (_, row) => (
+            <span className="font-medium text-gray-600">
+              {formatDate(row.endDate)}
+            </span>
+          ),
         },
         {
           key: "status",
@@ -127,25 +176,45 @@ const LeaveEmployeeTable = ({ data = [], role, onApprove, onReject }) => {
               {value}
             </span>
           ),
-        }
+        },
       );
     } else if (role === "hr") {
       baseColumns.push(
-        { 
-          key: "employeeName", 
+        {
+          key: "employeeName",
           title: "Employee Name",
-          render: (_, row) => getEmployeeName(row)
+          render: (_, row) => (
+            <span className="font-medium text-gray-600">
+              {getEmployeeName(row)}
+            </span>
+          ),
         },
-        { key: "leaveType", title: "Leave Type" },
+        {
+          key: "leaveType",
+          title: "Leave Type",
+          render: (value) => (
+            <span className="font-medium text-gray-600">
+              {capitalizeWords(value)}
+            </span>
+          ),
+        },
         {
           key: "from",
           title: "From",
-          render: (_, row) => formatDate(row.startDate)
+          render: (_, row) => (
+            <span className="font-medium text-gray-600">
+              {formatDate(row.startDate)}
+            </span>
+          ),
         },
         {
           key: "to",
           title: "To",
-          render: (_, row) => formatDate(row.endDate)
+          render: (_, row) => (
+            <span className="font-medium text-gray-600">
+              {formatDate(row.endDate)}
+            </span>
+          ),
         },
         {
           key: "status",
@@ -161,7 +230,7 @@ const LeaveEmployeeTable = ({ data = [], role, onApprove, onReject }) => {
               {value}
             </span>
           ),
-        }
+        },
       );
     }
 
@@ -174,6 +243,7 @@ const LeaveEmployeeTable = ({ data = [], role, onApprove, onReject }) => {
     <DataTable
       data={safeData}
       columns={columns}
+      loading={loading}
       pagination
       sortable
       actions={
@@ -186,15 +256,15 @@ const LeaveEmployeeTable = ({ data = [], role, onApprove, onReject }) => {
                   variant="outline"
                   onClick={() => onApprove(row._id)}
                 >
-                  <Check className="w-4 h-4"/>
+                  <Check className="w-4 h-4" />
                 </Button>
                 <Button
                   size="sm"
-                 className="text-red-600"
-                 variant="outline"
+                  className="text-red-600"
+                  variant="outline"
                   onClick={() => onReject(row._id)}
                 >
-                  <X className="w-4 h-4"/>
+                  <X className="w-4 h-4" />
                 </Button>
               </div>
             )

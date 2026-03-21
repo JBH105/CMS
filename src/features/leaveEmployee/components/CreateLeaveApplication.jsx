@@ -93,44 +93,28 @@ const CreateLeaveApplication = ({ open, onClose, onSubmit, loading }) => {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50">
+    <div className="fixed inset-0 bg-zinc-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity">
       
       {/* Modal - with proper scrolling for all screen sizes */}
-      <div
-        className="
-        w-full
-        max-w-3xl
-        max-h-[90vh]
-        bg-white
-        rounded-2xl
-        shadow-xl
-        border border-gray-200
-        flex
-        flex-col
-        "
-      >
+      <div className="w-full max-w-3xl max-h-[85vh] bg-white rounded-xl shadow-2xl shadow-black/10 border border-zinc-200 flex flex-col overflow-hidden will-change-transform">
         {/* Fixed Header */}
-        <div className="p-4 sm:p-6 md:p-8 pb-2 border-b border-gray-100">
-          <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900">
+        <div className="px-6 py-5 border-b border-zinc-100 bg-zinc-50/50">
+          <h2 className="text-lg font-semibold text-zinc-900 tracking-tight">
             Create Leave Application
           </h2>
-          <p className="text-sm text-gray-500 mt-1">
-            Submit your leave request for approval
+          <p className="text-sm text-zinc-500 mt-1">
+            Submit your leave request for approval.
           </p>
         </div>
 
         {/* Scrollable Form Area */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 pt-2">
+        <div className="flex-1 overflow-y-auto px-6 py-5">
           <form
+            id="create-leave-form"
             onSubmit={formik.handleSubmit}
-            className="
-            grid
-            grid-cols-1
-            sm:grid-cols-2
-            gap-4 sm:gap-5
-            "
+            className="grid grid-cols-1 sm:grid-cols-2 gap-5"
           >
-            {/* Leave Type - Full width on mobile, half on desktop */}
+            {/* Leave Type - Full width on flex, half on desktop */}
             <div className="sm:col-span-2">
               <FloatingSelect
                 id="leaveType"
@@ -177,35 +161,34 @@ const CreateLeaveApplication = ({ open, onClose, onSubmit, loading }) => {
 
             {/* Reason - Full width */}
             <div className="sm:col-span-2">
-              <FloatingTextarea
+              <FloatingField
                 id="reason"
                 label="Reason for Leave"
                 formik={formik}
+                as={Textarea}
               />
             </div>
           </form>
         </div>
 
         {/* Fixed Footer with Buttons */}
-        <div className="p-4 sm:p-6 md:p-8 pt-2 border-t border-gray-100">
-          <div className="flex justify-end gap-3">
+        <div className="px-6 py-4 border-t border-zinc-100 bg-zinc-50/50 flex justify-end gap-3">
             <Button 
               type="button" 
               variant="outline" 
               onClick={onClose}
-              className="px-4 py-2 text-sm sm:text-base"
+              className="px-4 py-2 text-sm font-medium text-zinc-600 bg-white border-zinc-200 hover:bg-zinc-100 hover:text-zinc-900 shadow-sm"
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              onClick={formik.handleSubmit}
+              form="create-leave-form"
               disabled={loading || !formik.isValid || !formik.dirty}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm sm:text-base"
+              className="bg-zinc-900 hover:bg-zinc-800 text-white px-4 py-2 text-sm font-medium shadow-sm transition-all"
             >
               {loading ? "Submitting..." : "Submit Leave Application"}
             </Button>
-          </div>
         </div>
       </div>
     </div>

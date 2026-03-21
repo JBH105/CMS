@@ -6,18 +6,13 @@ import { useRouter } from "next/router";
 import { logout } from "@/features/auth/services/authSlice";
 import {
   FiBell,
-  FiChevronLeft,
-  FiChevronRight,
   FiLogOut,
   FiMenu,
+  FiSearch,
 } from "react-icons/fi";
+import { cn } from "@/lib/utils";
 
-const Header = ({
-  onMenuClick,
-  onToggleSidebar,
-  isSidebarCollapsed,
-  isMobile,
-}) => {
+const Header = ({ onMenuClick, isSidebarCollapsed, isMobile }) => {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const router = useRouter();
@@ -25,82 +20,78 @@ const Header = ({
   const [mounted, setMounted] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => setMounted(true), []);
 
   const handleLogout = () => {
     dispatch(logout());
     router.push("/login");
   };
 
-  const displayName = user?.username || user?.name;
-  const displayRole = user?.role;
-  const displayEmail = user?.email;
-  const displayInitial = displayName?.charAt(0)?.toUpperCase() || "U";
+  const displayName = user?.username || user?.name || "User";
+  const displayRole = user?.role || "Admin";
+  const displayEmail = user?.email || "user@example.com";
+  const displayInitial = displayName.charAt(0).toUpperCase();
 
   if (!mounted) return null;
 
   return (
-    <header className="sticky top-0 z-30 bg-white shadow-[0_4px_12px_-4px_rgba(0,0,0,0.08)]">
-      <div className="flex items-center justify-between h-16 px-4 lg:px-6">
+    <header className="sticky top-0 z-30 bg-white border-b border-zinc-200">
+      <div className="flex items-center justify-between h-16 px-4 sm:px-6">
+        {/* LEFT */}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-zinc-900 rounded-md flex items-center justify-center shadow-sm">
+              <span className="text-white font-bold text-sm">C</span>
+            </div>
+            <div className="hidden sm:flex items-center">
+              <h2 className="text-lg font-semibold text-zinc-900 tracking-tight">
+                CMS
+              </h2>
+            </div>
+          </div>
 
-        {/* LEFT SIDE */}
-        <div className="flex items-center gap-2">
-
-          {/* Mobile menu */}
           <button
             onClick={onMenuClick}
-            className="lg:hidden w-10 h-10 flex items-center justify-center rounded-lg text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition"
+            className="lg:hidden w-9 h-9 flex items-center justify-center rounded-md text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 transition-colors"
           >
             <FiMenu className="w-5 h-5" />
           </button>
 
-          {/* Sidebar toggle */}
-          <button
-            onClick={onToggleSidebar}
-            disabled={isMobile}
-            className={`hidden lg:flex w-10 h-10 items-center justify-center rounded-lg transition ${
-              isMobile
-                ? "text-gray-300 cursor-not-allowed"
-                : "text-gray-600 hover:bg-blue-50 hover:text-blue-600"
-            }`}
-          >
-            {isSidebarCollapsed ? (
-              <FiChevronRight className="w-5 h-5" />
-            ) : (
-              <FiChevronLeft className="w-5 h-5" />
-            )}
-          </button>
+          {/* Search Bar - hidden on small mobile */}
+          {/* <div className="hidden md:flex items-center relative ml-4">
+            <FiSearch className="w-4 h-4 text-zinc-400 absolute left-3" />
+            <input
+              type="text"
+              placeholder="Search..."
+              className="pl-9 pr-4 py-1.5 w-64 bg-zinc-50 border border-zinc-200 rounded-md text-sm text-zinc-800 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 transition-all"
+            />
+          </div> */}
         </div>
 
-        {/* RIGHT SIDE */}
-        <div className="flex items-center gap-3">
-
+        {/* RIGHT */}
+        <div className="flex items-center gap-2 sm:gap-3">
           {/* Notification */}
-          <button className="w-10 h-10 flex items-center justify-center rounded-lg text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition">
-            <FiBell className="w-5 h-5" />
+          <button className="relative w-9 h-9 flex items-center justify-center rounded-md text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 transition-colors">
+            <FiBell className="w-4 h-4" />
+            <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-rose-500 rounded-full ring-2 ring-white"></span>
           </button>
 
           {/* Profile */}
           <div className="relative">
             <button
               onClick={() => setShowProfileMenu(!showProfileMenu)}
-              className="flex items-center gap-3 px-2 py-1.5 rounded-lg hover:bg-blue-50 transition"
+              className="flex items-center gap-2.5 p-1 rounded-full sm:rounded-md hover:bg-zinc-100 transition-colors focus:outline-none focus:bg-zinc-100"
             >
-              {/* Avatar */}
-              <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-blue-400 rounded-lg flex items-center justify-center">
-                <span className="text-white text-sm font-semibold">
+              <div className="w-8 h-8 bg-zinc-100 border border-zinc-200 rounded-full flex items-center justify-center">
+                <span className="text-zinc-700 text-xs font-semibold">
                   {displayInitial}
                 </span>
               </div>
-
-              {/* User Info */}
-              <div className="hidden lg:block text-left">
-                <p className="text-sm font-medium text-gray-800">
+              <div className="hidden lg:block text-left mr-1">
+                <p className="text-sm font-medium text-zinc-900 leading-none">
                   {displayName}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-zinc-500 mt-1 leading-none capitalize">
                   {displayRole}
                 </p>
               </div>
@@ -113,26 +104,24 @@ const Header = ({
                   className="fixed inset-0 z-40"
                   onClick={() => setShowProfileMenu(false)}
                 />
-
-                <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-md z-50">
-                  {/* User Info */}
-                  <div className="px-4 py-3 border-b border-gray-200">
-                    <p className="text-sm font-medium text-gray-800">
+                <div className="absolute right-0 mt-2 w-56 bg-white border border-zinc-200 rounded-lg shadow-lg z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="px-4 py-3 border-b border-zinc-100 bg-zinc-50/50">
+                    <p className="text-sm font-medium text-zinc-900 truncate">
                       {displayName}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-zinc-500 truncate mt-0.5">
                       {displayEmail}
                     </p>
                   </div>
-
-                  {/* Logout */}
-                  <button
-                    onClick={handleLogout}
-                    className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-500 hover:bg-red-50 transition"
-                  >
-                    <FiLogOut className="w-4 h-4" />
-                    Sign out
-                  </button>
+                  <div className="p-1">
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-rose-600 rounded-md hover:bg-rose-50 transition-colors"
+                    >
+                      <FiLogOut className="w-4 h-4" />
+                      Sign out
+                    </button>
+                  </div>
                 </div>
               </>
             )}

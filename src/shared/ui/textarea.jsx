@@ -6,14 +6,15 @@ function Textarea({ className, ...props }) {
     <textarea
       placeholder=" "
       className={cn(
-        "peer w-full min-h-[100px] rounded-lg",
-        "border border-blue-400",
-        "bg-white backdrop-blur-[1px]",
-        "px-3 pt-4 pb-1 text-sm text-gray-800",
+        "peer w-full min-h-[80px] rounded-md",
+        "border border-zinc-200",
+        "bg-white",
+        "px-3 py-2 text-sm text-zinc-900",
         "outline-none transition-all resize-none",
-        "placeholder-black/60",
-        "focus:border-blue-600 focus:ring-1 focus:ring-blue-200",
+        "placeholder:text-zinc-400",
+        "focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900",
         "shadow-sm",
+        "disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
       {...props}

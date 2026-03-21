@@ -4,7 +4,6 @@ import React, { useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Button } from "@/shared/ui/button";
-import { Input } from "@/shared/ui/input";
 import { Textarea } from "@/shared/ui/textarea";
 import FloatingField from "@/shared/field/FloatingField";
 import FloatingSelect from "@/shared/field/FloatingSelect";
@@ -16,55 +15,58 @@ const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email").required("Email is required"),
   phone: Yup.string().required("Phone is required"),
   gender: Yup.string().required("Gender is required"),
-  startingSalary: Yup.number()
-    .required("Starting salary is required")
-    .positive("Must be positive"),
-  currentSalary: Yup.number()
-    .required("Current salary is required")
-    .positive("Must be positive"),
-  offerDetails: Yup.string().required("Offer details are required"),
-  joiningDate: Yup.date().required("Joining date is required"),
-  birthDate: Yup.date().required("Birth date is required"),
-  address: Yup.string().required("Address is required"),
-  guardianRelation: Yup.string().required("Guardian relation is required"),
-  guardianNumber: Yup.string().required("Guardian number is required"),
-  pin: Yup.string().required("Enter Pin is required"),
+  startingSalary: Yup.number().required().positive(),
+  currentSalary: Yup.number().required().positive(),
+  offerDetails: Yup.string().required(),
+  joiningDate: Yup.date().required(),
+  birthDate: Yup.date().required(),
+  address: Yup.string().required(),
+  guardianRelation: Yup.string().required(),
+  guardianNumber: Yup.string().required(),
+  pin: Yup.string().required(),
   increments: Yup.array().of(
     Yup.object().shape({
-      date: Yup.date()
-        .min(new Date(), "Date must be in future"),
-      amount: Yup.number().positive("Must be positive").required("Required"),
+      date: Yup.date().nullable(),
+      amount: Yup.number().nullable(),
     }),
   ),
 });
 
-/* ---------------- MODAL ---------------- */
+/* ---------------- COMPONENT ---------------- */
 
-const CreateEmployee = ({ open, onClose, onSubmit, loading }) => {
+const UpdateEmployee = ({ open, onClose, onSubmit, loading, employee }) => {
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
-      name: "",
-      email: "",
-      phone: "",
-      gender: "",
-      startingSalary: "",
-      currentSalary: "",
-      offerDetails: "",
-      joiningDate: "",
-      birthDate: "",
-      address: "",
-      guardianRelation: "",
-      guardianNumber: "",
-      pin: "",
-      increments: [],
+      name: employee?.name || "",
+      email: employee?.email || "",
+      phone: employee?.phone || "",
+      gender: employee?.gender || "",
+      startingSalary: employee?.startingSalary || "",
+      currentSalary: employee?.currentSalary || "",
+      offerDetails: employee?.offerDetails || "",
+      joiningDate: employee?.joiningDate?.split("T")[0] || "",
+      birthDate: employee?.birthDate?.split("T")[0] || "",
+      address: employee?.address || "",
+      guardianRelation: employee?.guardianRelation || "",
+      guardianNumber: employee?.guardianNumber || "",
+      pin: employee?.biometricId || "",
+      increments:
+        employee?.increments?.map((inc) => ({
+          date: inc.date ? inc.date.split("T")[0] : "",
+          amount: inc.amount || "",
+        })) || [],
     },
     validationSchema,
     onSubmit: (values) => {
-      onSubmit(values);
+      onSubmit({
+        id: employee?._id,
+        ...values,
+      });
     },
   });
+  console.log("🚀 ~ UpdateEmployee ~ formik:", formik?.values?.increments)
 
-  /* reset form when modal closes */
   useEffect(() => {
     if (!open) formik.resetForm();
   }, [open]);
@@ -74,22 +76,23 @@ const CreateEmployee = ({ open, onClose, onSubmit, loading }) => {
   return (
     <div className="fixed inset-0 bg-zinc-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity">
       <div className="w-full max-w-3xl max-h-[85vh] bg-white rounded-xl shadow-2xl shadow-black/10 border border-zinc-200 flex flex-col overflow-hidden will-change-transform">
+        {/* Header */}
         <div className="px-6 py-5 border-b border-zinc-100 bg-zinc-50/50">
           <h2 className="text-lg font-semibold text-zinc-900 tracking-tight">
-            Create New Employee
+            Update Employee
           </h2>
           <p className="text-sm text-zinc-500 mt-1">
-            Enter the details for the new employee.
+            Edit the details for this employee.
           </p>
         </div>
 
+        {/* Form */}
         <div className="flex-1 overflow-y-auto px-6 py-5">
           <form
-            id="create-employee-form"
+            id="update-employee-form"
             onSubmit={formik.handleSubmit}
             className="grid grid-cols-1 sm:grid-cols-2 gap-5"
           >
-            {/* Personal Information */}
             <div className="col-span-1 sm:col-span-2">
               <h3 className="text-sm font-semibold text-zinc-900 uppercase tracking-wider mb-4 pb-2 border-b border-zinc-100">
                 Personal Information
@@ -97,18 +100,9 @@ const CreateEmployee = ({ open, onClose, onSubmit, loading }) => {
             </div>
 
             <FloatingField id="name" label="Full Name" formik={formik} />
-            <FloatingField
-              id="email"
-              label="Email"
-              type="email"
-              formik={formik}
-            />
-            <FloatingField
-              id="phone"
-              label="Phone Number"
-              type="tel"
-              formik={formik}
-            />
+            <FloatingField id="email" label="Email" formik={formik} />
+            <FloatingField id="phone" label="Phone" formik={formik} />
+
             <FloatingSelect
               id="gender"
               label="Gender"
@@ -119,21 +113,21 @@ const CreateEmployee = ({ open, onClose, onSubmit, loading }) => {
                 { value: "Other", label: "Other" },
               ]}
             />
+
             <FloatingField
               id="birthDate"
-              label="Birth Date"
               type="date"
+              label="Birth Date"
               formik={formik}
             />
             <FloatingField
               id="joiningDate"
-              label="Joining Date"
               type="date"
+              label="Joining Date"
               formik={formik}
             />
 
-            {/* Address */}
-            <div className="col-span-1 sm:col-span-2">
+            <div className="col-span-2">
               <FloatingField
                 id="address"
                 label="Address"
@@ -142,7 +136,6 @@ const CreateEmployee = ({ open, onClose, onSubmit, loading }) => {
               />
             </div>
 
-            {/* Salary Information */}
             <div className="col-span-1 sm:col-span-2 mt-2">
               <h3 className="text-sm font-semibold text-zinc-900 uppercase tracking-wider mb-4 pb-2 border-b border-zinc-100">
                 Salary Information
@@ -151,18 +144,18 @@ const CreateEmployee = ({ open, onClose, onSubmit, loading }) => {
 
             <FloatingField
               id="startingSalary"
-              label="Starting Salary"
               type="number"
+              label="Starting Salary"
               formik={formik}
             />
             <FloatingField
               id="currentSalary"
-              label="Current Salary"
               type="number"
+              label="Current Salary"
               formik={formik}
             />
 
-            <div className="col-span-1 sm:col-span-2">
+            <div className="col-span-2">
               <FloatingField
                 id="offerDetails"
                 label="Offer Details"
@@ -236,7 +229,6 @@ const CreateEmployee = ({ open, onClose, onSubmit, loading }) => {
               ))}
             </div>
 
-            {/* Emergency Contact */}
             <div className="col-span-1 sm:col-span-2 mt-2">
               <h3 className="text-sm font-semibold text-zinc-900 uppercase tracking-wider mb-4 pb-2 border-b border-zinc-100">
                 Emergency Contact
@@ -245,49 +237,48 @@ const CreateEmployee = ({ open, onClose, onSubmit, loading }) => {
 
             <FloatingField
               id="guardianRelation"
-              label="Guardian Relation"
+              label="Relation"
               formik={formik}
             />
             <FloatingField
               id="guardianNumber"
               label="Guardian Number"
-              type="tel"
               formik={formik}
             />
 
-            {/* Work Information */}
             <div className="col-span-1 sm:col-span-2 mt-2">
               <h3 className="text-sm font-semibold text-zinc-900 uppercase tracking-wider mb-4 pb-2 border-b border-zinc-100">
                 Work Information
               </h3>
             </div>
 
-            <FloatingField id="pin" label="Enter Pin" formik={formik} />
+            <FloatingField id="pin" label="Pin" formik={formik} />
           </form>
         </div>
 
-        {/* Fixed Footer with Buttons */}
+        {/* Footer */}
         <div className="px-6 py-4 border-t border-zinc-100 bg-zinc-50/50 flex justify-end gap-3">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-zinc-600 bg-white border-zinc-200 hover:bg-zinc-100 hover:text-zinc-900 shadow-sm"
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            form="create-employee-form"
-            disabled={loading}
-            className="bg-zinc-900 hover:bg-zinc-800 text-white px-4 py-2 text-sm font-medium shadow-sm"
-          >
-            {loading ? "Creating..." : "Create Employee"}
-          </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              className="px-4 py-2 text-sm font-medium text-zinc-600 bg-white border-zinc-200 hover:bg-zinc-100 hover:text-zinc-900 shadow-sm"
+            >
+              Cancel
+            </Button>
+
+            <Button
+              type="submit"
+              form="update-employee-form"
+              disabled={loading}
+              className="bg-zinc-900 hover:bg-zinc-800 text-white px-4 py-2 text-sm font-medium shadow-sm"
+            >
+              {loading ? "Updating..." : "Update Employee"}
+            </Button>
         </div>
       </div>
     </div>
   );
 };
 
-export default CreateEmployee;
+export default UpdateEmployee;

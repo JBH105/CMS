@@ -11,15 +11,18 @@ import {
   useDeleteClientMutation,
 } from "../services/clientApi";
 import { toast } from "sonner";
-import Loader from "@/layout/loader/loader";
 import CommonDialog from "@/shared/dialog/dialog";
+import { Plus, Users } from "lucide-react";
+import EmptyPage from "@/shared/emptypage/emptyPage";
 
 const ClientPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState("create");
   const [selectedClient, setSelectedClient] = useState(null);
 
-  const { data: clients, isLoading, refetch } = useGetAllClientQuery();
+  const { data: clients, isLoading, isFetching, refetch } = useGetAllClientQuery();
+  const isDataLoading = isLoading || isFetching;
+
   const [createClient, { isLoading: createLoading }] =
     useCreateClientMutation();
   const [updateClient, { isLoading: updateLoading }] =
@@ -104,29 +107,41 @@ const ClientPage = () => {
     }
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
   return (
-    <div className="w-full">
-      <div className="w-full mx-auto p-6">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Clients</h1>
+    <div className="w-full h-full flex flex-col">
+      <div className="w-full  mx-auto p-4 sm:p-5 lg:p-5 flex-1">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          <div>
+            <h1 className="text-2xl font-semibold text-zinc-900 tracking-tight">Clients</h1>
+            <p className="text-sm text-zinc-500 mt-1">
+              Manage all your client projects and details.
+            </p>
+          </div>
           <Button
             onClick={handleCreateClick}
-            className="bg-gradient-to-br from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 text-white font-medium text-md shadow-md hover:shadow-lg rounded-lg transition-all duration-300 border-0"
+            className="bg-zinc-900 hover:bg-zinc-800 text-white font-medium text-sm shadow-sm rounded-md transition-all flex items-center gap-2"
           >
+            <Plus className="w-4 h-4" />
             Create Client
           </Button>
         </div>
 
-        <ClientTable
-          data={clients}
-          loading={isLoading}
-          onDelete={handleDelete}
-          onEdit={handleEdit}
-        />
+        {isDataLoading || (clients && clients.length > 0) ? (
+          <ClientTable
+            data={clients || []}
+            loading={isDataLoading}
+            onDelete={handleDelete}
+            onEdit={handleEdit}
+          />
+        ) : (
+          <EmptyPage
+            title="No Clients Found"
+            description="You don't have any clients yet. Add your first client to get started."
+            buttonText="Create Client"
+            onAction={handleCreateClick}
+            icon={Users}
+          />
+        )}
       </div>
 
       <ClientForm

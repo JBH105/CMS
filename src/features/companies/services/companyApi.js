@@ -31,6 +31,13 @@ export const companyApi = createApi({
         method: "DELETE",
       }),
     }),
+    addCompanyOwner: builder.mutation({
+      query: (ownerData) => ({
+        url: "/auth?action=addCompanyOwner",
+        method: "POST",
+        body: ownerData,
+      }),
+    }),
   }),
 });
 
@@ -40,4 +47,5 @@ export const {
   useCreateCompanyMutation,
   useUpdateCompanyMutation,
   useDeleteCompanyMutation,
+  useAddCompanyOwnerMutation,
 } = companyApi;
