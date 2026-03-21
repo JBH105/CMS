@@ -17,13 +17,20 @@ export const findUserId = async (companyId) => {
     return company;
 }
 
-export const getAllClient = async () => {
-    const allClients = await clientModel.find();
-    return allClients;
+export const getAllClient = async (company) => {
+    if (company.role === "company") {
+        const allClients = await clientModel.find({ companyId: company.id }).sort({ createdAt: -1 });
+        if (allClients.length === 0) throw new Error("Clients not found in this company");
+        return allClients;
+    }
 };
 
-export const singleClientInfo = async (clientId) => {
+export const singleClientInfo = async (clientId, company) => {
     const client = await clientModel.findById(clientId);
+    if (!client) throw new Error("Client not found");
+    if (client.companyId.toString() !== company.id.toString()) {
+        throw new Error("Unauthorized access");
+    }
     return client;
 };
 

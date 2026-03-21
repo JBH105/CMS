@@ -22,14 +22,10 @@ export const getLeaveService = async (user) => {
         return await employeeLeave.find().sort({ createdAt: -1 }).populate("employeeId");
     }
     if (user.role === "company") {
-        return await employeeLeave.find({
-            companyId: user.id,
-        }).sort({ createdAt: -1 }).populate("employeeId");
+        return await employeeLeave.find({ companyId: user.id }).sort({ createdAt: -1 }).populate("employeeId");
     }
     if (user.role === "employee") {
-        return await employeeLeave.find({
-            employeeId: user.id,
-        }).sort({ createdAt: -1 }).populate("employeeId");
+        return await employeeLeave.find({ employeeId: user.id }).sort({ createdAt: -1 }).populate("employeeId");
     }
     throw new Error("Unauthorized user");
 };

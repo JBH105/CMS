@@ -30,7 +30,9 @@ export const getAllEmployeeHandler = async (req, res) => {
 export const updateEmployeeHandler = async (req, res) => {
   try {
     const employeeId = req.query.id;
-    const result = await editEmployeeService(req.body, employeeId);
+    const { error, value } = employeeValidationSchema.validate(req.body);
+    if (error) return handleError(res, new Error(error.message), HTTP_STATUS.BAD_REQUEST);
+    const result = await editEmployeeService(value, employeeId);
     return handleResponse(res, result, HTTP_STATUS.OK);
   } catch (error) {
     return handleError(res, new Error(error.message), HTTP_STATUS.INTERNAL_SERVER_ERROR);

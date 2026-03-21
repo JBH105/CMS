@@ -25,6 +25,13 @@ export const getEmployeeService = async (user) => {
 export const editEmployeeService = async (employeeData, id) => {
   const employeeId = await employeeModel.findById(id);
   if (!employeeId) throw new Error("Employee not found with this id")
+  if (employeeData.pin) {
+    const existingEmployee = await employeeModel.findOne({
+      pin: employeeData.pin,
+      _id: { $ne: id }
+    });
+    if (existingEmployee) throw new Error("PIN already exists");
+  }
   const updatedEmployee = await employeeModel.findByIdAndUpdate(id, employeeData, { new: true });
   return updatedEmployee;
 };
