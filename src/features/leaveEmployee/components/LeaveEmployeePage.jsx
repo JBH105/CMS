@@ -11,7 +11,8 @@ import {
 } from "@/features/leaveEmployee/services/leaveemployeeApi";
 import CreateLeaveApplication from "./CreateLeaveApplication";
 import { toast } from "sonner";
-import Loader from "@/layout/loader/loader";
+import EmptyPage from "@/shared/emptypage/emptyPage";
+import { CalendarOff, Plus } from "lucide-react";
 
 
 const LeaveEmployeePage = ({ role }) => {
@@ -20,13 +21,15 @@ const LeaveEmployeePage = ({ role }) => {
   const {
     data: response,
     isLoading,
+    isFetching,
     error,
     refetch,
   } = useGetEmployeeLeavesQuery();
+  const isDataLoading = isLoading || isFetching;
   const [approveLeaveRequest] = useApproveLeaveRequestMutation();
   const [rejectLeaveRequest] = useRejectLeaveRequestMutation();
   const [createLeave, { isLoading: isCreating }] =
-    useCreateLeaveRequestMutation(); // You'll need to add this hook
+    useCreateLeaveRequestMutation();
 
   const leaves = response?.data || [];
 
@@ -34,7 +37,7 @@ const LeaveEmployeePage = ({ role }) => {
     try {
       await approveLeaveRequest(id).unwrap();
 
-      toast.success("Leave approved 👍");
+      toast.success("Leave approved");
       refetch();
     } catch (error) {
       const message =
@@ -48,7 +51,7 @@ const LeaveEmployeePage = ({ role }) => {
     try {
       await rejectLeaveRequest(id).unwrap();
 
-      toast.success("Leave rejected ❌");
+      toast.success("Leave rejected");
       refetch();
     } catch (error) {
       const message =
@@ -82,40 +85,54 @@ const LeaveEmployeePage = ({ role }) => {
       console.error("Error creating leave:", error);
     }
   };
-  if (isLoading) {
-    return <Loader />;
-  }
-
   if (error) {
     return (
-      <div className="w-full min-h-screen bg-blue-50 flex items-center justify-center">
-        <div className="text-red-500 text-xl">Error loading leaves data</div>
+      <div className="w-full min-h-[400px] flex items-center justify-center">
+        <div className="text-rose-500 text-sm font-medium">Error loading leaves data</div>
       </div>
     );
   }
 
   return (
-    <div className="w-full">
-      <div className="w-full mx-auto p-6">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Leave Management</h1>
+    <div className="w-full h-full flex flex-col">
+      <div className="w-full  mx-auto p-4 sm:p-5 lg:p-5 flex-1">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          <div>
+            <h1 className="text-2xl font-semibold text-zinc-900 tracking-tight">Leave Management</h1>
+            <p className="text-sm text-zinc-500 mt-1">
+              Manage and track employee leave requests.
+            </p>
+          </div>
 
           {role === "employee" && (
             <Button
               onClick={handleApplyLeave}
-              className="bg-gradient-to-br from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 text-white font-medium text-md shadow-md hover:shadow-lg rounded-lg transition-all duration-300 border-0"
+              className="bg-zinc-900 hover:bg-zinc-800 text-white font-medium text-sm shadow-sm rounded-md transition-all flex items-center gap-2"
             >
+              <Plus className="w-4 h-4" />
               Apply Leave
             </Button>
           )}
         </div>
 
-        <LeaveEmployeeTable
-          data={leaves}
-          role={role}
-          onApprove={handleApprove}
-          onReject={handleReject}
-        />
+        {isDataLoading || (leaves && leaves.length > 0) ? (
+          <LeaveEmployeeTable
+            data={leaves || []}
+            loading={isDataLoading}
+            role={role}
+            onApprove={handleApprove}
+            onReject={handleReject}
+          />
+        ) : (
+          <EmptyPage
+            title="No Leave Requests"
+            description="There are no leave requests available right now."
+            buttonText="Apply Leave"
+            onAction={role === "employee" ? handleApplyLeave : undefined}
+            showAction={role === "employee"}
+            icon={CalendarOff}
+          />
+        )}
       </div>
 
       {/* Create Leave Modal */}

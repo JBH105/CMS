@@ -3,7 +3,8 @@
 import React from "react";
 import DataTable from "@/shared/Table/DataTable";
 import { Button } from "@/shared/ui/button";
-import { Pencil, Trash2 } from "lucide-react";
+import { Mail, Pencil, Phone, Trash2 } from "lucide-react";
+import { capitalizeWords } from "@/utils/formater";
 
 const getStatusBadge = (status) => {
   const statusStyles = {
@@ -25,12 +26,53 @@ const getStatusBadge = (status) => {
 };
 
 const columns = [
-  
-  { key: "name", title: "Name", sortable: true },
-  { key: "email", title: "Email", sortable: true },
-  { key: "phone", title: "Phone" },
   {
-    key: "gender",title: "Gender"},
+    key: "name",
+    title: "Name",
+    sortable: true,
+    render: (value) => (
+      <span className="font-medium text-gray-600">
+        {capitalizeWords(value)}
+      </span>
+    ),
+  },
+  {
+    key: "email",
+    title: "Email",
+    sortable: true,
+    render: (value) => (
+      <a
+        href={`mailto:${value}`}
+        className="flex items-center gap-2 text-zinc-600 hover:text-zinc-900 transition-colors text-sm group"
+      >
+        <Mail size={14} className="text-zinc-400 group-hover:text-zinc-900" />
+        <span>{value}</span>
+      </a>
+    ),
+  },
+  {
+    key: "phone",
+    title: "Phone",
+    render: (value) => (
+      <a
+        href={`tel:${value}`}
+        className="flex items-center gap-2 text-zinc-600 hover:text-zinc-900 transition-colors text-sm group"
+      >
+        <Phone size={14} className="text-zinc-400 group-hover:text-zinc-900" />
+        <span>{value}</span>
+      </a>
+    ),
+  },
+  {
+    key: "gender",
+    title: "Gender",
+    sortable: false,
+    render: (value) => (
+      <span className="font-medium text-gray-600">
+        {capitalizeWords(value)}
+      </span>
+    ),
+  },
   {
     key: "joiningDate",
     title: "Joining Date",
@@ -42,14 +84,19 @@ const columns = [
     key: "currentSalary",
     title: "Current Salary",
     sortable: true,
-    render: (value) => (value ? `₹${value}` : "N/A"),
+    render: (value) => (
+      <span className="font-medium text-gray-600">
+        {value ? `₹${value}` : "N/A"}
+      </span>
+    ),
   },
 
-  // 🔥 Address BEFORE actions
   {
     key: "address",
     title: "Address",
-    render: (value) => value || "N/A",
+    render: (value) => (
+      <span className="font-medium text-gray-600">{value || "N/A"}</span>
+    ),
   },
 
   {
@@ -57,23 +104,29 @@ const columns = [
     title: "Guardian Info",
     render: (_, row) => (
       <div className="flex flex-col">
-        <span className="text-sm font-medium text-gray-800">
+        <span className="text-sm font-medium text-gray-500">
           {row.guardianRelation || "N/A"}
         </span>
-        <span className="text-xs text-gray-500">
-          {row.guardianNumber || "N/A"}
-        </span>
+        <a
+          href={`tel:${row.guardianNumber}`}
+          className="flex items-center gap-2 text-xs text-zinc-500 hover:text-zinc-900 transition-colors group"
+        >
+          <Phone
+            size={14}
+            className="text-zinc-400 group-hover:text-zinc-900"
+          />
+          <span>{row.guardianNumber}</span>
+        </a>
       </div>
     ),
   },
 ];
 
 const EmployeeTable = ({ data, loading, onEdit, onDelete }) => {
-  if (loading) return <div>Loading...</div>;
-
   return (
     <DataTable
       data={data || []}
+      loading={loading}
       columns={columns}
       showActions={true}
       actions={(row) => (
@@ -82,7 +135,7 @@ const EmployeeTable = ({ data, loading, onEdit, onDelete }) => {
             variant="ghost"
             size="sm"
             onClick={() => onEdit(row)}
-            className="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2"
+            className="text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 p-2"
           >
             <Pencil className="h-4 w-4" />
           </Button>
@@ -91,7 +144,7 @@ const EmployeeTable = ({ data, loading, onEdit, onDelete }) => {
             variant="ghost"
             size="sm"
             onClick={() => onDelete(row)}
-            className="text-red-600 hover:text-red-800 hover:bg-red-50 p-2"
+            className="text-rose-600 hover:text-rose-900 hover:bg-rose-50 p-2"
           >
             <Trash2 className="h-4 w-4" />
           </Button>
