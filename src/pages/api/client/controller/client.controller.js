@@ -25,11 +25,12 @@ export const singleClientInfoHandler = tryCatchWrapper(async (req, res) => {
 });
 
 export const deleteClientHandler = tryCatchWrapper(async (req, res) => {
+    const companyId = req.user.id;
     const clientId = req.query.id;
     if (!clientId) {
         return handleError(res, new Error("Client ID is required"), HTTP_STATUS.BAD_REQUEST);
     }
-    await deleteClient(clientId);
+    await deleteClient(clientId, companyId);
     return handleResponse(res, "Client deleted successfully", HTTP_STATUS.OK);
 });
 

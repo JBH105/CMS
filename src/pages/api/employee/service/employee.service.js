@@ -2,11 +2,13 @@ import { HTTP_STATUS } from "@/utils/httpStatus";
 import companyModel from "../../company/model/company.model";
 import employeeModel from "../model/employee.model";
 import bcrypt from "bcrypt";
+import mongoose from "mongoose";
+import employeeLeave from "../model/employeeLeave.model";
 
 export const createEmployee = async (employeeData) => {
   const { email, companyId, pin } = employeeData;
   const existingPin = await employeeModel.findOne({ pin });
-  if (existingPin) throw new Error("PIN already exists");
+  if (existingPin) throw new Error("Oops! That PIN already exists. Try a new one");
   await existsEmployee(email);
   await fetchCompany(companyId);
   await countEmployee(companyId);
@@ -44,6 +46,23 @@ export const editEmployeeService = async (employeeData, id) => {
   }
   const updatedEmployee = await employeeModel.findByIdAndUpdate(id, employeeData, { new: true });
   return updatedEmployee;
+};
+
+export const deleteEmployeeService = async (employeeId, companyId) => {
+  if (!mongoose.Types.ObjectId.isValid(employeeId)) {
+    throw new Error("Invalid employee Id");
+  }
+
+  const employee = await employeeModel.findById(employeeId);
+  if (!employee) throw new Error("Employee not found");
+  
+  if (employee.companyId.toString() !== companyId.toString()) {
+    throw new Error("Unauthorized: You can't delete this employee");
+  }
+
+  await employeeModel.findByIdAndDelete(employeeId);
+  await employeeLeave.deleteMany({ employeeId: employeeId });
+  return employee;
 };
 
 export const existsEmployee = async (email) => {

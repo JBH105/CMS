@@ -1,10 +1,9 @@
 import { HTTP_STATUS } from "@/utils/httpStatus";
 import uploadImage from "../../Middleware/uploadImage";
-import { createCompany, existsCompany, getAllCompanies } from "../service/company.service";
+import { createCompany, existsCompany, getAllCompanies, getSingleCompany, updateCompany, deleteCompany } from "../service/company.service";
 import { companyValidationSchema } from "../validation/company.validation";
 import { handleError, handleResponse } from "@/utils/responseHandler";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
-import { userExists } from "../../auth/service/auth.service";
 
 export const createCompanyHandler = async (req, res) => {
     uploadImage.single("companyLogo")(req, res, async (err) => {
@@ -17,7 +16,6 @@ export const createCompanyHandler = async (req, res) => {
             const loginAdminId = req.user.id;
 
             await existsCompany(value.email, value.companyName);
-            await userExists(value.email);
             const newCompany = await createCompany(value, loginAdminId);
             return handleResponse(res, newCompany, HTTP_STATUS.CREATED);
         } catch (error) {
@@ -30,4 +28,27 @@ export const AllCompaniesHandler = tryCatchWrapper(async (req, res) => {
     const adminId = req.user.id;
     const companies = await getAllCompanies(adminId);
     return handleResponse(res, companies, HTTP_STATUS.OK);
+});
+
+export const singleCompanyHandler = tryCatchWrapper(async (req, res) => {
+    const adminId = req.user.id;
+    const companyId = req.query.id;
+    const company = await getSingleCompany(adminId, companyId);
+    return handleResponse(res, company, HTTP_STATUS.OK);
+});
+
+export const editCompanyHandler = tryCatchWrapper(async (req, res) => {
+    const { error, value } = companyValidationSchema.validate(req.body);
+    if (error) return handleError(res, new Error(error.message), HTTP_STATUS.BAD_REQUEST);
+    const adminId = req.user.id;
+    const companyId = req.query.id;
+    const newCompany = await updateCompany(adminId, companyId, value);
+    return handleResponse(res, newCompany, HTTP_STATUS.OK);
+});
+
+export const deleteCompanyHandler = tryCatchWrapper(async (req, res) => {
+    const adminId = req.user.id;
+    const companyId = req.query.id;
+    await deleteCompany(adminId, companyId);
+    return handleResponse(res, "Company deleted successfully.", HTTP_STATUS.OK);
 });

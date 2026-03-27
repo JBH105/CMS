@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import companyModel from "../../company/model/company.model";
 import clientModel from "../model/client.model";
 
@@ -34,8 +35,18 @@ export const singleClientInfo = async (clientId, company) => {
     return client;
 };
 
-export const deleteClient = async (clientId) => {
-    return await clientModel.findByIdAndDelete(clientId);
+export const deleteClient = async (clientId, companyId) => {
+    if (!mongoose.Types.ObjectId.isValid(clientId)) {
+        throw new Error("Invalid client Id");
+    }
+
+    const client = await clientModel.findById(clientId);
+    if (!client) throw new Error("Client not found");
+    if (client.companyId.toString() !== companyId.toString()) {
+        throw new Error("Unauthorized: You can't delete this client");
+    }
+    await clientModel.findByIdAndDelete(clientId);
+    return client;
 };
 
 export const updateClientInfo = async (data, clientId) => {
