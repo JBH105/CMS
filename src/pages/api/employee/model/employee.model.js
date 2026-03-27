@@ -76,11 +76,6 @@ const employeeSchema = new mongoose.Schema({
         type: String,
         unique: true,
         required: true
-    },
-    biometricId: {
-        type: String,
-        unique: true,
-        required: true
     }
 },
     {

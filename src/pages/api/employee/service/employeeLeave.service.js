@@ -34,6 +34,10 @@ export const updateLeaveStatusService = async (id, status, user) => {
     if (user.role !== "company") {
         throw new Error("Only company can approve/reject");
     }
+    const leave = await employeeLeave.findById(id);
+    if (leave.companyId.toString() !== user.id) {
+        throw new Error("Unauthorized: This leave does not belong to your company");
+    }
     const admin = await userModel.findById(user.id);
     const updated = await employeeLeave.findByIdAndUpdate(id, { status }, { new: true }).populate("employeeId");
     if (!updated) throw new Error("Leave request not found");

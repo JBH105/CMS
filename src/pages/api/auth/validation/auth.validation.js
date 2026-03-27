@@ -10,5 +10,6 @@ export const userValidationSchema = Joi.object({
 
 export const loginValidation = Joi.object({
     email: Joi.string().email().required(),
-    password: Joi.string().required(),
+    password: Joi.string(),
+    pin: Joi.string()
 });
