@@ -1,7 +1,7 @@
 import { HTTP_STATUS } from "@/utils/httpStatus";
 import { handleError, handleResponse } from "@/utils/responseHandler";
 import { createEmployee, deleteEmployeeService, editEmployeeService, fingerNotFound, getEmployeeService } from "../service/employee.service";
-import { employeeValidationSchema } from "../validation/employee.validation";
+import { employeeValidationSchema, updateEmployeeSchema } from "../validation/employee.validation";
 
 export const createEmployeeHandler = async (req, res) => {
   try {
@@ -29,7 +29,7 @@ export const getAllEmployeeHandler = async (req, res) => {
 export const updateEmployeeHandler = async (req, res) => {
   try {
     const employeeId = req.query.id;
-    const { error, value } = employeeValidationSchema.validate(req.body);
+    const { error, value } = updateEmployeeSchema.validate(req.body);
     if (error) return handleError(res, new Error(error.message), HTTP_STATUS.BAD_REQUEST);
     const result = await editEmployeeService(value, employeeId);
     return handleResponse(res, result, HTTP_STATUS.OK);

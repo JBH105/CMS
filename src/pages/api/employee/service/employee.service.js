@@ -28,7 +28,6 @@ export const createEmployee = async (employeeData) => {
 export const getEmployeeService = async (user) => {
   if (user.role === "company") {
     let employee = await employeeModel.find({ companyId: user.id, }).sort({ created_at: -1 }).populate("companyId");
-    if (employee.length === 0) throw new Error("No employee found in this company");
     return employee;
   }
   throw new Error("Unauthorized user");
@@ -44,6 +43,9 @@ export const editEmployeeService = async (employeeData, id) => {
     });
     if (existingEmployee) throw new Error("PIN already exists");
   }
+  else {
+    delete employeeData.pin;
+  }
   const updatedEmployee = await employeeModel.findByIdAndUpdate(id, employeeData, { new: true });
   return updatedEmployee;
 };
@@ -55,7 +57,7 @@ export const deleteEmployeeService = async (employeeId, companyId) => {
 
   const employee = await employeeModel.findById(employeeId);
   if (!employee) throw new Error("Employee not found");
-  
+
   if (employee.companyId.toString() !== companyId.toString()) {
     throw new Error("Unauthorized: You can't delete this employee");
   }
