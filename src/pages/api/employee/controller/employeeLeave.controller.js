@@ -18,7 +18,6 @@ export const createLeaveHandler = async (req, res) => {
 export const getLeaveHandler = async (req, res) => {
     try {
         const result = await getLeaveService(req.user);
-        if (result.length === 0) throw new Error("No any one leave found.");
         return handleResponse(res, result, HTTP_STATUS.OK);
     } catch (error) {
         return handleError(res, new Error(error.message), HTTP_STATUS.INTERNAL_SERVER_ERROR);
