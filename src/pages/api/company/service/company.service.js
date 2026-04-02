@@ -5,6 +5,7 @@ import companyOwnerModel from "../../auth/model/companyOwner.model";
 import mongoose from "mongoose";
 import employeeModel from "../../employee/model/employee.model";
 import employeeLeave from "../../employee/model/employeeLeave.model";
+import bcrypt from 'bcrypt';
 
 export const createCompany = async (companyData, loginAdminId) => {
     const { email, password } = companyData;
@@ -55,7 +56,6 @@ export const existsCompany = async (email, companyName, companyId = null) => {
 
 export const getAllCompanies = async (adminId) => {
     const allCompanies = await companyModel.find({ accountId: adminId }).sort({ created_at: -1 });
-    if (allCompanies.length === 0) throw new Error("No anyone company found of this admin");
     return allCompanies;
 };
 
@@ -81,8 +81,23 @@ export const updateCompany = async (adminId, companyId, value) => {
         throw new Error("Unauthorized: You can't edit this company");
     }
     await existsCompany(value.email, value.companyName, companyId);
+    let hashedPassword;
+    if (value.password) {
+        hashedPassword = await bcrypt.hash(value.password, 10);
+        value.password = hashedPassword;
+    } else {
+        delete value.password;
+    }
     const editCompany = await companyModel.findByIdAndUpdate(companyId, value, { new: true })
-    return editCompany
+    if (company.userId) {
+        const userUpdateData = {
+            username: value.companyName,
+            email: value.email
+        }
+        if (hashedPassword) userUpdateData.password = hashedPassword;
+        await userModel.findByIdAndUpdate(company.userId, userUpdateData, { new: true });
+    }
+    return editCompany;
 };
 
 export const deleteCompany = async (adminId, companyId) => {

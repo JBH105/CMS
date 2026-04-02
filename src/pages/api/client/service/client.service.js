@@ -21,7 +21,6 @@ export const findUserId = async (companyId) => {
 export const getAllClient = async (company) => {
     if (company.role === "company") {
         const allClients = await clientModel.find({ companyId: company.id }).sort({ createdAt: -1 });
-        if (allClients.length === 0) throw new Error("Clients not found in this company");
         return allClients;
     }
 };

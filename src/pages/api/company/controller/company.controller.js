@@ -1,7 +1,7 @@
 import { HTTP_STATUS } from "@/utils/httpStatus";
 import uploadImage from "../../Middleware/uploadImage";
 import { createCompany, existsCompany, getAllCompanies, getSingleCompany, updateCompany, deleteCompany } from "../service/company.service";
-import { companyValidationSchema } from "../validation/company.validation";
+import { companyValidationSchema, updateCompanySchema } from "../validation/company.validation";
 import { handleError, handleResponse } from "@/utils/responseHandler";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 
@@ -38,7 +38,7 @@ export const singleCompanyHandler = tryCatchWrapper(async (req, res) => {
 });
 
 export const editCompanyHandler = tryCatchWrapper(async (req, res) => {
-    const { error, value } = companyValidationSchema.validate(req.body);
+    const { error, value } = updateCompanySchema.validate(req.body);
     if (error) return handleError(res, new Error(error.message), HTTP_STATUS.BAD_REQUEST);
     const adminId = req.user.id;
     const companyId = req.query.id;
